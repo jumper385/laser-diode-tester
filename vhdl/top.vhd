@@ -43,6 +43,8 @@ architecture rtl of top is
 	end component SB_RGBA_DRV;
 
 	signal clk_48mhz : std_logic;
+	signal pulse_signal : std_logic;
+
 begin
 
 	global_clk: component SB_HFOSC
@@ -52,13 +54,15 @@ begin
 		CLKHF => clk_48mhz
 	);
 
+	pulse_signal <= clk_48mhz when en = '1' else '1';
+
 	led_drive: component SB_RGBA_DRV
 	port map (
-		CURREN => en,
-		RGBLEDEN => en,
-		RGB0PWM => clk_48mhz,
-		RGB1PWM => clk_48mhz,
-		RGB2PWM => clk_48mhz,
+		CURREN => '1',
+		RGBLEDEN => '1',
+		RGB0PWM => pulse_signal,
+		RGB1PWM => pulse_signal,
+		RGB2PWM => pulse_signal,
 		RGB0 => led_r,
 		RGB1 => led_g,
 		RGB2 => led_b
