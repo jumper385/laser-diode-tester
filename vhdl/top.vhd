@@ -4,9 +4,9 @@ use ieee.std_logic_1164.all;
 entity top is
 	port (
 		en : in std_logic; -- enable pulsing
-		led_r : out std_logic; 
-		led_g : out std_logic; 
-		led_b : out std_logic 
+		led_r : out std_logic;
+		led_g : out std_logic;
+		led_b : out std_logic
 	);
 end entity top;
 
@@ -52,15 +52,15 @@ begin
 		CLKHF => clk_48mhz
 	);
 
-	led_drive : component SB_RGBA_DRV
+	led_drive: component SB_RGBA_DRV
 	port map (
 		CURREN => en,
 		RGBLEDEN => en,
-		RGB0PWM => clk_48mhz,	
-		RGB1PWM => clk_48mhz,	
-		RGB2PWM => clk_48mhz,	
-		RGB0 => led_r, 
-		RGB1 => led_g, 
+		RGB0PWM => clk_48mhz,
+		RGB1PWM => clk_48mhz,
+		RGB2PWM => clk_48mhz,
+		RGB0 => led_r,
+		RGB1 => led_g,
 		RGB2 => led_b
 	);
 
