@@ -12,16 +12,13 @@ end entity top;
 
 architecture rtl of top is
 
-	component SB_HFOSC is
-		generic (
-			CLKHF_DIV : STRING := "0b00"
-		);
+	component SB_LFOSC is
 		port (
-			CLKHFEN : in STD_LOGIC;
-			CLKHFPU : in STD_LOGIC;
-			CLKHF : out STD_LOGIC
+			CLKLFEN : in STD_LOGIC;
+			CLKLFPU : in STD_LOGIC;
+			CLKLF : out STD_LOGIC
 		);
-	end component SB_HFOSC;
+	end component SB_LFOSC;
 
 	component SB_RGBA_DRV is
 		generic (
@@ -47,11 +44,11 @@ architecture rtl of top is
 
 begin
 
-	global_clk: component SB_HFOSC
+	global_clk: component SB_LFOSC
 	port map (
-		CLKHFEN => '1',
-		CLKHFPU => '1',
-		CLKHF => clk_48mhz
+		CLKLFEN => '1',
+		CLKLFPU => '1',
+		CLKLF => clk_48mhz
 	);
 
 	pulse_signal <= clk_48mhz when en = '1' else '1';
