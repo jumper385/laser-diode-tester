@@ -3,49 +3,65 @@ use ieee.std_logic_1164.all;
 
 entity top is
 	port (
-		a_i : in std_logic;
-		b_i : in std_logic;
-		c_i : in std_logic;
-		d_o : out std_logic
+		en : in std_logic; -- enable pulsing
+		led_r : out std_logic; 
+		led_g : out std_logic; 
+		led_b : out std_logic 
 	);
-end top;
+end entity top;
 
 architecture rtl of top is
-	component and2 
-		port (
-			a : in std_logic;
-			b : in std_logic;
-			y : out std_logic
+
+	component SB_HFOSC is
+		generic (
+			CLKHF_DIV : STRING := "0b00"
 		);
-	end component;
-
-	component or2 
 		port (
-			a : in std_logic;
-			b : in std_logic;
-			y : out std_logic
+			CLKHFEN : in STD_LOGIC;
+			CLKHFPU : in STD_LOGIC;
+			CLKHF : out STD_LOGIC
 		);
-	end component;
+	end component SB_HFOSC;
 
-	signal and2_o : std_logic;
-	signal or2_o : std_logic;
+	component SB_RGBA_DRV is
+		generic (
+			CURRENT_MODE : string := "0b0"; -- "0b0" = half-current mode off (full-scale)
+			RGB0_CURRENT : string := "0b111111"; -- 6-bit current code
+			RGB1_CURRENT : string := "0b111111";
+			RGB2_CURRENT : string := "0b111111"
+		);
+		port (
+			CURREN : in std_logic;
+			RGBLEDEN : in std_logic;
+			RGB0PWM : in std_logic;
+			RGB1PWM : in std_logic;
+			RGB2PWM : in std_logic;
+			RGB0 : out std_logic;
+			RGB1 : out std_logic;
+			RGB2 : out std_logic
+		);
+	end component SB_RGBA_DRV;
 
+	signal clk_48mhz : std_logic;
 begin
 
-	and_inst : and2
+	global_clk: component SB_HFOSC
 	port map (
-		a => a_i, 
-		b => b_i,
-		y => and2_o
+		CLKHFEN => '1',
+		CLKHFPU => '1',
+		CLKHF => clk_48mhz
 	);
 
-	or_inst : or2
+	led_drive : component SB_RGBA_DRV
 	port map (
-		a => and2_o,
-		b => c_i,
-		y => or2_o
+		CURREN => en,
+		RGBLEDEN => en,
+		RGB0PWM => clk_48mhz,	
+		RGB1PWM => clk_48mhz,	
+		RGB2PWM => clk_48mhz,	
+		RGB0 => led_r, 
+		RGB1 => led_g, 
+		RGB2 => led_b
 	);
-	
-	d_o <= or2_o;
 
-end architecture;
+end architecture rtl;
